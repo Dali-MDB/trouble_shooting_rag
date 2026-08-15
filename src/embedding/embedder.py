@@ -10,3 +10,6 @@ class Embedder:
         vectors = self.model.encode(texts)
         #pair the chunks with their corresponding vectors
         return  [(chunk, vector.tolist()) for chunk, vector in zip(chunks, vectors)]
+
+    def embed_query(self, query: str)->list[float]:
+        return self.model.encode(query).tolist()

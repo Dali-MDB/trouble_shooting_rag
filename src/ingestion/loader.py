@@ -66,11 +66,11 @@ class DocumentLoader:
     def _determine_type(self, path: str)->DocumentType | None:
         file_type = None
 
-        if "dataset/incident" in path:
+        if os.path.join("dataset","incident") in path:
             file_type = DocumentType.INCIDENT
-        elif "dataset/architecture" in path:
+        elif os.path.join("dataset","architecture") in path:
             file_type = DocumentType.ARCHITECTURE
-        elif "dataset/runbooks" in path:
+        elif os.path.join("dataset","runbooks") in path:
             file_type = DocumentType.RUNBOOK
 
         return file_type

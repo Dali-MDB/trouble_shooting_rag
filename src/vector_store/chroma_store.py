@@ -3,7 +3,7 @@ from chunking.models import Chunk
 
 
 class ChromaStore:
-    def __init__(self, path: str, collection_name: str):
+    def __init__(self, path: str = "./chroma", collection_name: str="vec"):
         self.client = chromadb.PersistentClient(path=path)
         self.collection = self.client.get_or_create_collection(name=collection_name)
 
@@ -11,7 +11,7 @@ class ChromaStore:
         self.collection.upsert(
                 ids = [x[0].id for x in embedded_chunks],
                 documents = [x[0].content for x in embedded_chunks],
-                metadatas = [x[0].metadata.model_dump() for x in embedded_chunks],
+                metadatas = [x[0].metadata.model_dump(mode="json") for x in embedded_chunks],  #mode json for date object
                 embeddings = [x[1] for x in embedded_chunks],
         )
 
