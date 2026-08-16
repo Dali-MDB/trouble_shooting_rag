@@ -35,5 +35,27 @@ class ChromaStore:
     def count(self)->int:
         return self.collection.count()
 
+    def get_relevant_sections(self, document_ids: list[str], sections: list[str]):
+        #build the where condition
+        where = {
+            "$and": [
+                {
+                    "$or": [
+                        {"document_id": document_id}
+                        for document_id in document_ids
+                    ]
+                },
+                {
+                    "$or": [
+                        {"section": section}
+                        for section in sections
+                    ]
+                }
+            ]
+        }
+
+        return self.collection.get(
+            where=where
+        )
 
 
