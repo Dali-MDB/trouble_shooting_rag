@@ -5,7 +5,14 @@ from chunking.models import Chunk
 class ChromaStore:
     def __init__(self, path: str = "./chroma", collection_name: str="vec"):
         self.client = chromadb.PersistentClient(path=path)
-        self.collection = self.client.get_or_create_collection(name=collection_name)
+        self.collection = self.client.get_or_create_collection(
+            name=collection_name,
+              configuration={
+                "hnsw": {
+                    "space": "cosine"
+                }
+              }
+            )
 
     def upsert(self, embedded_chunks: list[tuple[Chunk, list[float]]]):
         self.collection.upsert(

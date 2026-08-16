@@ -31,13 +31,3 @@ for doc in documents:
 print(chromaStore.count())
 
 
-#test searching
-query = "began returning HTTP 502 Bad Gateway responses for authenticated endpoints"
-
-query_vector = embedder.embed_query(query)
-
-rslt = chromaStore.search(query_vector)
-
-print(rslt)
-
-
