@@ -10,6 +10,10 @@ class ContextBuilder:
         self.relevant_sections = ["Investigation", "Root Cause", "Resolution"]
         self.section_order = [
                     "Title",
+                    "Service",
+                    "Severity",
+                    "Environment",
+                    "Date",
                     "Symptoms",
                     "Timeline",
                     "Investigation",
@@ -20,18 +24,38 @@ class ContextBuilder:
 
     def build(self, retrieved_chunks: list[RetrievedChunk]):
         #get the documents_ids
-        document_ids = list({
+        document_ids = self._get_document_ids(retrieved_chunks)
+
+        #retrieve the important sections
+        result = self._retrieve_relevant_sections(document_ids)
+
+        #organize chunks by document_id
+        grouped = self._group_chunks(result)
+
+        #add the originally retrieved chunks
+        self._add_retrieved_chunks(grouped, retrieved_chunks)
+
+        #organize the sections
+        self._sort_chunks(grouped)
+
+        return Context(grouped)
+
+
+    def _get_document_ids(self, retrieved_chunks: list[RetrievedChunk]):
+        return list({
             chunk.metadata.document_id
             for chunk in retrieved_chunks
         })
 
-        #retrieve the important sections
-        result = self.vector_store.get_relevant_sections(
+
+    def _retrieve_relevant_sections(self, document_ids: list[str]):
+        return self.vector_store.get_relevant_sections(
             document_ids,
             self.relevant_sections
         )
 
-        #organize chunks by document_id
+
+    def _group_chunks(self, result):
         grouped = {}
 
         for i in range(len(result["ids"])):
@@ -48,7 +72,10 @@ class ContextBuilder:
             else:  #first item
                 grouped[document_id] = [chunk]
 
-        #add the originally retrieved chunks
+        return grouped
+
+
+    def _add_retrieved_chunks(self, grouped: dict, retrieved_chunks: list[RetrievedChunk]):
         for chunk in retrieved_chunks:
             document_id = chunk.metadata.document_id
 
@@ -62,7 +89,8 @@ class ContextBuilder:
             if not exists:
                 grouped[document_id].append(chunk)
 
-        #organize the sections
+
+    def _sort_chunks(self, grouped: dict):
         for document_id in grouped:
             grouped[document_id].sort(
                 key=lambda x: (
@@ -71,4 +99,3 @@ class ContextBuilder:
                 )
             )
 
-        return Context(grouped)
