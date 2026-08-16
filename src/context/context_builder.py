@@ -1,10 +1,11 @@
 from vector_store.chroma_store import ChromaStore
 from retrieval.models import RetrievedChunk
 from chunking.models import ChunkMetadata
+from .models import Context
 
 
 class ContextBuilder:
-    def __init__(self, vector_store: ChromaStore):
+    def __init__(self, vector_store: ChromaStore)->Context:
         self.vector_store = vector_store
         self.relevant_sections = ["Investigation", "Root Cause", "Resolution"]
         self.section_order = [
@@ -70,4 +71,4 @@ class ContextBuilder:
                 )
             )
 
-        return grouped
+        return Context(grouped)
