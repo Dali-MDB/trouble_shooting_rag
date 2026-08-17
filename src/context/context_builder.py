@@ -5,7 +5,7 @@ from .models import Context
 
 
 class ContextBuilder:
-    def __init__(self, vector_store: ChromaStore)->Context:
+    def __init__(self, vector_store: ChromaStore):
         self.vector_store = vector_store
         self.relevant_sections = ["Investigation", "Root Cause", "Resolution"]
         self.section_order = [
@@ -22,7 +22,7 @@ class ContextBuilder:
                     "Lessons Learned"
                 ]
 
-    def build(self, retrieved_chunks: list[RetrievedChunk]):
+    def build(self, retrieved_chunks: list[RetrievedChunk])->Context:
         #get the documents_ids
         document_ids = self._get_document_ids(retrieved_chunks)
 
