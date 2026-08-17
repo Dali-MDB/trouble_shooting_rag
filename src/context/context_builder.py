@@ -22,12 +22,15 @@ class ContextBuilder:
                     "Lessons Learned"
                 ]
 
+        
+
     def build(self, retrieved_chunks: list[RetrievedChunk])->Context:
         #get the documents_ids
         document_ids = self._get_document_ids(retrieved_chunks)
 
         #retrieve the important sections
         result = self._retrieve_relevant_sections(document_ids)
+
 
         #organize chunks by document_id
         grouped = self._group_chunks(result)
@@ -38,7 +41,7 @@ class ContextBuilder:
         #organize the sections
         self._sort_chunks(grouped)
 
-        return Context(grouped)
+        return Context(documents=grouped)
 
 
     def _get_document_ids(self, retrieved_chunks: list[RetrievedChunk]):

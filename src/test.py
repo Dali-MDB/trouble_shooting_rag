@@ -23,10 +23,14 @@ queries_list = [
 from embedding.embedder import Embedder
 from vector_store.chroma_store import ChromaStore
 from retrieval.retriever import Retriever
+from context.context_builder import ContextBuilder
+from generation.generator import Generator
 
 embedder = Embedder()
 chromaStore = ChromaStore(collection_name="my_collection")
 retriever = Retriever(embedder, chromaStore)
+context_builder = ContextBuilder(chromaStore)
+generator = Generator()
 
 
 
@@ -39,13 +43,10 @@ for i in queries_list:
     print("QUERY:", q)
     print("EXPECTED:", e)
 
-    for rank, chunk in enumerate(answer, start=1):
-        print(
-            rank,
-            chunk.metadata.document_id,
-            chunk.metadata.section,
-            chunk.distance
-        )
+    context = context_builder.build(answer)
+    print(generator.context_to_string(context))
+
+    
        
 
     print("----------------------------")

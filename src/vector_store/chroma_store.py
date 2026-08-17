@@ -36,26 +36,36 @@ class ChromaStore:
         return self.collection.count()
 
     def get_relevant_sections(self, document_ids: list[str], sections: list[str]):
+        #build the document condition
+        if len(document_ids) == 1:
+            document_condition = {"document_id": document_ids[0]}
+        else:
+            document_condition = {
+                "$or": [
+                    {"document_id": document_id}
+                    for document_id in document_ids
+                ]
+            }
+
+        #build the section condition
+        if len(sections) == 1:
+            section_condition = {"section": sections[0]}
+        else:
+            section_condition = {
+                "$or": [
+                    {"section": section}
+                    for section in sections
+                ]
+            }
+
         #build the where condition
         where = {
             "$and": [
-                {
-                    "$or": [
-                        {"document_id": document_id}
-                        for document_id in document_ids
-                    ]
-                },
-                {
-                    "$or": [
-                        {"section": section}
-                        for section in sections
-                    ]
-                }
+                document_condition,
+                section_condition
             ]
         }
 
         return self.collection.get(
             where=where
         )
-
-
